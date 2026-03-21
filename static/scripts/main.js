@@ -271,20 +271,44 @@ function initializeGoogleSignIn() {
             cancel_on_tap_outside: true
         });
 
+        // Render the VISIBLE Google button in the header
         google.accounts.id.renderButton(
             googleBtnContainer,
             {
                 type: 'standard',
-                theme: 'filled_blue',
+                theme: 'outline',
                 size: 'large',
                 text: 'signin_with',
                 shape: 'pill',
-                width: 250,
+                width: 220,
                 locale: 'en'
             }
         );
 
-        googleBtnContainer.style.opacity = '0.01';
+        // Make the Google button VISIBLE (no more hiding)
+        googleBtnContainer.style.opacity = '1';
+        googleBtnContainer.classList.remove('google-btn-hidden');
+
+        // Hide the custom button since real Google button is now visible
+        const customBtn = document.querySelector('.btn-custom-signin');
+        if (customBtn) customBtn.style.display = 'none';
+
+        // Also render Google button on the reviews login prompt if present
+        const reviewsLoginBtn = document.getElementById('reviews-google-signin');
+        if (reviewsLoginBtn) {
+            google.accounts.id.renderButton(
+                reviewsLoginBtn,
+                {
+                    type: 'standard',
+                    theme: 'filled_blue',
+                    size: 'large',
+                    text: 'signin_with',
+                    shape: 'pill',
+                    width: 280,
+                    locale: 'en'
+                }
+            );
+        }
     }
 }
 
