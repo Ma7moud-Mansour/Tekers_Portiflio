@@ -1,0 +1,251 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tekers - Customer Reviews</title>
+    <meta name="description" content="Read verified customer reviews and share your experience with Tekers Technology Solutions.">
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/" style="display:flex;align-items:center;text-decoration:none;">
+                    <img src="{% static 'img/logo.png' %}" alt="Tekers Logo" class="logo-image">
+                </a>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="/#home" class="nav-link">Home</a></li>
+                <li><a href="/#services" class="nav-link">Services</a></li>
+                <li><a href="/#projects" class="nav-link">Projects</a></li>
+                <li><a href="/#about" class="nav-link">About</a></li>
+                <li><a href="/#contact" class="nav-link">Contact</a></li>
+                <li><a href="/reviews/" class="nav-link active">Reviews</a></li>
+            </ul>
+            <div class="nav-auth" id="nav-auth">
+                <!-- Sign-In Button (shown when not signed in) -->
+                <div class="signin-wrapper" id="signin-wrapper">
+                    <div id="google-signin-button" class="google-btn-hidden"></div>
+                    <button class="btn btn-primary btn-custom-signin" style="padding: 0 1.6rem">
+                        <div class="btn-icon-bg">
+                            <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                                <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
+                                    <path fill="#4285F4"
+                                        d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.749 L -8.284 53.749 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -6.824 60.329 C -4.564 58.239 -3.264 55.159 -3.264 51.509 Z" />
+                                    <path fill="#34A853"
+                                        d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -6.824 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.464 53.529 L -25.464 56.619 C -23.494 60.539 -19.444 63.239 -14.754 63.239 Z" />
+                                    <path fill="#FBBC05"
+                                        d="M -21.484 53.529 C -21.734 52.769 -21.864 51.959 -21.864 51.119 C -21.864 50.279 -21.734 49.469 -21.484 48.709 L -21.484 45.619 L -25.464 45.619 C -26.284 47.249 -26.754 49.129 -26.754 51.119 C -26.754 53.109 -26.284 54.989 -25.464 56.619 L -21.484 53.529 Z" />
+                                    <path fill="#EA4335"
+                                        d="M -14.754 43.739 C -12.984 43.739 -11.424 44.349 -10.174 45.539 L -6.714 42.079 C -8.804 40.129 -11.514 38.989 -14.754 38.989 C -19.444 38.989 -23.494 41.689 -25.464 45.619 L -21.484 48.709 C -20.534 45.859 -17.884 43.739 -14.754 43.739 Z" />
+                                </g>
+                            </svg>
+                        </div>
+                        <span class="btn-text">Sign in with Google</span>
+                    </button>
+                </div>
+                <!-- User Avatar & Logout (shown when signed in) -->
+                <div id="user-profile" class="user-profile" style="display: none;">
+                    <img id="user-avatar" class="user-avatar" src="" alt="User Avatar">
+                    <button id="logout-button" class="logout-button" aria-label="Logout">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Reviews Section -->
+    <section class="section reviews-section" id="reviews">
+        <div class="reviews-background">
+            <div class="grid-overlay"></div>
+            <div class="glow-orb orb-1"></div>
+            <div class="glow-orb orb-2"></div>
+        </div>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Testimonials</span>
+                <h1 class="section-title">Customer Reviews</h1>
+                <p class="section-description">See what our clients say about their experience working with Tekers</p>
+            </div>
+
+            <!-- Review Form Area -->
+            <div class="review-form-wrapper" id="review-form-wrapper">
+                <!-- Login Prompt (shown when NOT signed in) -->
+                <div class="login-prompt" id="login-prompt">
+                    <div class="login-prompt-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <h3>Share Your Experience</h3>
+                    <p>Sign in with your Google account to submit a review</p>
+                    <button class="btn btn-primary" id="login-prompt-btn" onclick="triggerGoogleSignIn()">
+                        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                            <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
+                                <path fill="#fff"
+                                    d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.749 L -8.284 53.749 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -6.824 60.329 C -4.564 58.239 -3.264 55.159 -3.264 51.509 Z" />
+                                <path fill="#fff"
+                                    d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -6.824 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.464 53.529 L -25.464 56.619 C -23.494 60.539 -19.444 63.239 -14.754 63.239 Z" />
+                                <path fill="#fff"
+                                    d="M -21.484 53.529 C -21.734 52.769 -21.864 51.959 -21.864 51.119 C -21.864 50.279 -21.734 49.469 -21.484 48.709 L -21.484 45.619 L -25.464 45.619 C -26.284 47.249 -26.754 49.129 -26.754 51.119 C -26.754 53.109 -26.284 54.989 -25.464 56.619 L -21.484 53.529 Z" />
+                                <path fill="#fff"
+                                    d="M -14.754 43.739 C -12.984 43.739 -11.424 44.349 -10.174 45.539 L -6.714 42.079 C -8.804 40.129 -11.514 38.989 -14.754 38.989 C -19.444 38.989 -23.494 41.689 -25.464 45.619 L -21.484 48.709 C -20.534 45.859 -17.884 43.739 -14.754 43.739 Z" />
+                            </g>
+                        </svg>
+                        <span>Sign in with Google</span>
+                    </button>
+                </div>
+
+                <!-- Review Form (shown when signed in) -->
+                <div class="review-form-card" id="review-form-card" style="display: none;">
+                    <div class="review-form-header">
+                        <img id="form-user-avatar" class="form-user-avatar" src="" alt="Your Avatar">
+                        <div class="form-user-info">
+                            <h3 id="form-user-name">Your Name</h3>
+                            <p id="form-user-email">your***@email.com</p>
+                        </div>
+                    </div>
+                    <form id="review-form">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                        <div class="star-rating-input" id="star-rating-input">
+                            <label>Your Rating</label>
+                            <div class="stars-interactive">
+                                <span class="star-btn" data-rating="1">★</span>
+                                <span class="star-btn" data-rating="2">★</span>
+                                <span class="star-btn" data-rating="3">★</span>
+                                <span class="star-btn" data-rating="4">★</span>
+                                <span class="star-btn" data-rating="5">★</span>
+                            </div>
+                            <input type="hidden" id="rating-value" name="rating" value="0">
+                        </div>
+                        <div class="form-group">
+                            <textarea id="review-comment" name="comment" placeholder="Share your experience with us..." rows="4" maxlength="1000" required></textarea>
+                            <label for="review-comment">Your Review</label>
+                            <div class="char-counter"><span id="char-count">0</span>/1000</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit" id="review-submit-btn">
+                            <span>Submit Review</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                        <p class="form-note" id="form-note"></p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reviews Display Grid -->
+            <div class="reviews-grid" id="reviews-grid">
+                {% for review in reviews %}
+                <div class="review-card">
+                    <div class="review-card-header">
+                        {% if review.user_avatar %}
+                        <img src="{{ review.user_avatar }}" alt="{{ review.user_name }}" class="review-avatar" loading="lazy">
+                        {% else %}
+                        <div class="review-avatar-placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        {% endif %}
+                        <div class="review-user-info">
+                            <h4 class="review-user-name">{{ review.user_name }}</h4>
+                            <span class="review-user-email">{{ review.masked_email }}</span>
+                        </div>
+                        <div class="review-date">
+                            {{ review.created_at|date:"M d, Y" }}
+                        </div>
+                    </div>
+                    <div class="review-stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                                <span class="star filled">★</span>
+                            {% else %}
+                                <span class="star empty">★</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p class="review-comment">{{ review.comment }}</p>
+                </div>
+                {% empty %}
+                <div class="reviews-empty">
+                    <div class="empty-icon">💬</div>
+                    <h3>No Reviews Yet</h3>
+                    <p>Be the first to share your experience with Tekers!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="nav-logo">
+                        <img src="{% static 'img/logo.png' %}" alt="Tekers Logo" class="logo-image">
+                    </div>
+                    <p>Advanced Technology Solutions</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><a href="/#about">About</a></li>
+                            <li><a href="/#services">Services</a></li>
+                            <li><a href="/#projects">Projects</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Case Studies</a></li>
+                            <li><a href="#">Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Connect</h4>
+                        <ul>
+                            <li><a href="/#contact">Contact</a></li>
+                            <li><a href="#">LinkedIn</a></li>
+                            <li><a href="#">Twitter</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Tekers. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'scripts/main.js' %}"></script>
+    <script src="{% static 'scripts/reviews.js' %}"></script>
+</body>
+
+</html>

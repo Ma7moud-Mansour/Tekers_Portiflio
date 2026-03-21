@@ -179,7 +179,7 @@ statNumbers.forEach(stat => {
 // Configuration
 // IMPORTANT: Replace with your Google OAuth 2.0 Client ID from Google Cloud Console
 // Get it from: https://console.cloud.google.com/apis/credentials
-const GOOGLE_CLIENT_ID = '1077996978994-o02a67ascf2qkjc6ruumqa7o8g4n94es.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '908517504569-q4c0bleq0gpb8kednlfct5tqs5g0376d.apps.googleusercontent.com';
 
 // User state management
 let currentUser = null;
@@ -326,55 +326,22 @@ function handleCredentialResponse(response) {
     }
 }
 
-// Trigger Google Sign-In popup
+// Trigger Google Sign-In popup (using GIS prompt API)
 function triggerGoogleSignIn() {
-    if (isSigningIn || !googleSigninContainer) return;
+    if (isSigningIn) return;
 
-    isSigningIn = true;
-
-    // Programmatically click the Google Sign-In button to trigger popup
-    const findAndClickButton = (attempts = 0) => {
-        if (!googleSigninContainer) {
-            isSigningIn = false;
-            return;
-        }
-
-        const button = googleSigninContainer.querySelector('div[role="button"], iframe');
-        if (button) {
-            // Try clicking the button directly
-            if (button.click) {
-                button.click();
-            } else {
-                // If it's an iframe, try to find the button inside
-                try {
-                    const iframeDoc = button.contentDocument || button.contentWindow.document;
-                    const innerButton = iframeDoc.querySelector('div[role="button"]');
-                    if (innerButton) {
-                        innerButton.click();
-                    } else {
-                        // Fallback: dispatch click event
-                        const clickEvent = new MouseEvent('click', {
-                            view: window,
-                            bubbles: true,
-                            cancelable: true
-                        });
-                        button.dispatchEvent(clickEvent);
-                    }
-                } catch (e) {
-                    // Cross-origin iframe, try direct click
-                    if (button.click) button.click();
-                }
+    if (typeof google !== 'undefined' && google.accounts) {
+        isSigningIn = true;
+        google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                isSigningIn = false;
+                // If prompt can't show (e.g. blocked by browser), guide user to the header button
+                showNotification('Please use the Sign-In button in the header.', 'info');
             }
-        } else if (attempts < 5) {
-            // Retry if button isn't ready yet
-            setTimeout(() => findAndClickButton(attempts + 1), 300);
-        } else {
-            isSigningIn = false;
-            showNotification('Please click the Sign-In button in the header.', 'info');
-        }
-    };
-
-    findAndClickButton();
+        });
+    } else {
+        showNotification('Google Sign-In is not available. Please refresh the page.', 'error');
+    }
 }
 
 // Logout function

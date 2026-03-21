@@ -128,6 +128,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Google OAuth Configuration
+GOOGLE_CLIENT_ID = '908517504569-q4c0bleq0gpb8kednlfct5tqs5g0376d.apps.googleusercontent.com'
+
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
     "site_title": "Tekers Admin",
