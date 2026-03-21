@@ -267,6 +267,7 @@ function initializeGoogleSignIn() {
         google.accounts.id.initialize({
             client_id: GOOGLE_CLIENT_ID,
             callback: handleCredentialResponse,
+            ux_mode: 'popup',
             auto_select: false,
             cancel_on_tap_outside: true
         });
@@ -276,12 +277,13 @@ function initializeGoogleSignIn() {
             googleBtnContainer,
             {
                 type: 'standard',
-                theme: 'filled_blue', // Invisible
+                theme: 'filled_blue',
                 size: 'large',
                 text: 'signin_with',
                 shape: 'pill',
-                width: 250,         // Ensure it covers click area
-                locale: 'en'
+                width: 250,
+                locale: 'en',
+                ux_mode: 'popup'
             }
         );
 
