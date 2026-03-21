@@ -1,10 +1,9 @@
 import json
 import html
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
 from django.middleware.csrf import get_token
 from django.conf import settings
 
@@ -17,14 +16,8 @@ from .models import Project, Review, mask_email
 def index(request):
     projects = Project.objects.select_related('category').prefetch_related('technologies').all()
     
-    # Get Google session data (from mobile redirect auth)
-    google_user = request.session.pop('google_user', None)
-    google_credential = request.session.pop('google_credential', None)
-    
     context = {
         'projects': projects,
-        'google_user_json': json.dumps(google_user) if google_user else 'null',
-        'google_credential': google_credential or '',
     }
     return render(request, 'index.html', context)
 
@@ -45,15 +38,9 @@ def reviews_page(request):
             'created_at': review.created_at,
         })
     
-    # Get Google session data (from mobile redirect auth)
-    google_user = request.session.pop('google_user', None)
-    google_credential = request.session.pop('google_credential', None)
-    
     context = {
         'reviews': reviews_data,
         'csrf_token': get_token(request),
-        'google_user_json': json.dumps(google_user) if google_user else 'null',
-        'google_credential': google_credential or '',
     }
     return render(request, 'reviews.html', context)
 
@@ -156,43 +143,3 @@ def get_user_review(request):
         })
     except Review.DoesNotExist:
         return JsonResponse({'has_review': False})
-
-
-@csrf_exempt
-def google_auth_callback(request):
-    """Handle Google GIS redirect callback for mobile browsers.
-    
-    Google POSTs the credential here when using ux_mode: 'redirect'.
-    We verify the token, store user info in session, and redirect back.
-    """
-    if request.method != 'POST':
-        return redirect('/')
-    
-    credential = request.POST.get('credential', '')
-    if not credential:
-        return redirect('/')
-    
-    try:
-        idinfo = id_token.verify_oauth2_token(
-            credential,
-            google_requests.Request(),
-            settings.GOOGLE_CLIENT_ID
-        )
-        
-        # Store user info and credential in session for JS to pick up
-        request.session['google_user'] = {
-            'id': idinfo.get('sub', ''),
-            'name': idinfo.get('name', 'Anonymous'),
-            'email': idinfo.get('email', ''),
-            'picture': idinfo.get('picture', ''),
-        }
-        request.session['google_credential'] = credential
-        
-    except Exception:
-        pass  # Redirect back silently on error
-    
-    # Redirect back to the page the user came from
-    next_url = request.POST.get('next', request.META.get('HTTP_REFERER', '/'))
-    if not next_url or 'accounts.google.com' in next_url:
-        next_url = '/'
-    return redirect(next_url)

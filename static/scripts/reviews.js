@@ -241,12 +241,6 @@
     };
 
     // ── Initialize on page load ──────────────────────
-    // Pick up session credential from mobile redirect flow
-    if (window._sessionGoogleCredential) {
-        currentGoogleCredential = window._sessionGoogleCredential;
-        delete window._sessionGoogleCredential;
-    }
-
     // Poll for currentUser to be set (from main.js Google auth)
     const authCheckInterval = setInterval(() => {
         if (typeof currentUser !== 'undefined' && currentUser) {

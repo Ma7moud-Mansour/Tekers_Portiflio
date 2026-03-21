@@ -6,5 +6,4 @@ urlpatterns = [
     path('reviews/', views.reviews_page, name='reviews'),
     path('api/reviews/submit/', views.submit_review, name='submit_review'),
     path('api/reviews/user/', views.get_user_review, name='get_user_review'),
-    path('auth/google/callback/', views.google_auth_callback, name='google_auth_callback'),
 ]

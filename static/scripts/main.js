@@ -251,15 +251,8 @@ function updateHeaderUI() {
     }
 }
 
-// Detect if user is on a mobile device
-function isMobileDevice() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-        || (window.innerWidth <= 768);
-}
-
 // Initialize Google Sign-In
 function initializeGoogleSignIn() {
-    // Target the hidden container for the actual Google button
     const googleBtnContainer = document.getElementById('google-signin-button');
 
     if (!googleBtnContainer) return;
@@ -270,47 +263,27 @@ function initializeGoogleSignIn() {
             return;
         }
 
-        const mobile = isMobileDevice();
-        const loginUri = window.location.origin + '/auth/google/callback/';
-
-        const initConfig = {
+        google.accounts.id.initialize({
             client_id: GOOGLE_CLIENT_ID,
             callback: handleCredentialResponse,
+            ux_mode: 'popup',
             auto_select: false,
             cancel_on_tap_outside: true
-        };
+        });
 
-        if (mobile) {
-            // Mobile: use redirect flow (popups don't work well on mobile)
-            initConfig.ux_mode = 'redirect';
-            initConfig.login_uri = loginUri;
-        } else {
-            // Desktop: use popup flow
-            initConfig.ux_mode = 'popup';
-        }
+        google.accounts.id.renderButton(
+            googleBtnContainer,
+            {
+                type: 'standard',
+                theme: 'filled_blue',
+                size: 'large',
+                text: 'signin_with',
+                shape: 'pill',
+                width: 250,
+                locale: 'en'
+            }
+        );
 
-        google.accounts.id.initialize(initConfig);
-
-        const buttonConfig = {
-            type: 'standard',
-            theme: 'filled_blue',
-            size: 'large',
-            text: 'signin_with',
-            shape: 'pill',
-            width: 250,
-            locale: 'en'
-        };
-
-        if (mobile) {
-            buttonConfig.ux_mode = 'redirect';
-        } else {
-            buttonConfig.ux_mode = 'popup';
-        }
-
-        // Render invisible sign-in button over the custom one
-        google.accounts.id.renderButton(googleBtnContainer, buttonConfig);
-
-        // Ensure opacity is enforced via JS as a fallback
         googleBtnContainer.style.opacity = '0.01';
     }
 }
@@ -348,23 +321,6 @@ function handleCredentialResponse(response) {
         console.error('Error handling credential response:', error);
         showNotification('Sign-in failed. Please try again.', 'error');
         isSigningIn = false;
-    }
-}
-
-// Restore auth state from session (mobile redirect flow)
-function restoreSessionAuth() {
-    if (window._sessionGoogleUser && window._sessionGoogleUser.id) {
-        currentUser = {
-            id: window._sessionGoogleUser.id,
-            name: window._sessionGoogleUser.name,
-            email: window._sessionGoogleUser.email,
-            picture: window._sessionGoogleUser.picture
-        };
-        updateHeaderUI();
-        showNotification('Signed in as ' + currentUser.name, 'success');
-
-        // Clean up
-        delete window._sessionGoogleUser;
     }
 }
 
@@ -580,7 +536,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof google !== 'undefined' && google.accounts) {
             clearInterval(checkGoogle);
             initializeGoogleSignIn();
-            restoreSessionAuth();
             updateHeaderUI();
             console.log('✅ [System] Google Identity Services loaded successfully');
         }
