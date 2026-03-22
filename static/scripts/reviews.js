@@ -241,6 +241,11 @@
     };
 
     // ── Initialize on page load ──────────────────────
+    // Pick up credential from Google redirect (server verified it)
+    if (typeof _googleRedirectCredential !== 'undefined' && _googleRedirectCredential) {
+        currentGoogleCredential = _googleRedirectCredential;
+    }
+
     // Poll for currentUser to be set (from main.js Google auth)
     const authCheckInterval = setInterval(() => {
         if (typeof currentUser !== 'undefined' && currentUser) {

@@ -453,6 +453,11 @@
         </div>
     </footer>
 
+    <!-- Restore auth after Google redirect -->
+    <script>
+        var _googleRedirectUser = {{ google_user_json|safe }};
+        var _googleRedirectCredential = "{{ google_credential }}";
+    </script>
     <script src="{% static 'scripts/main.js' %}"></script>
 </body>
 

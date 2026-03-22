@@ -263,15 +263,17 @@ function initializeGoogleSignIn() {
             return;
         }
 
+        // Use current page as the redirect target
+        const loginUri = window.location.origin + window.location.pathname;
+
         google.accounts.id.initialize({
             client_id: GOOGLE_CLIENT_ID,
-            callback: handleCredentialResponse,
-            ux_mode: 'popup',
-            auto_select: false,
-            cancel_on_tap_outside: true
+            ux_mode: 'redirect',
+            login_uri: loginUri,
+            auto_select: false
         });
 
-        // Render the VISIBLE Google button in the header
+        // Render the Google button in the header
         google.accounts.id.renderButton(
             googleBtnContainer,
             {
@@ -285,7 +287,7 @@ function initializeGoogleSignIn() {
             }
         );
 
-        // Make the Google button VISIBLE (no more hiding)
+        // Make the Google button visible
         googleBtnContainer.style.opacity = '1';
         googleBtnContainer.classList.remove('google-btn-hidden');
 
@@ -553,6 +555,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logout button handler
     if (logoutButton) {
         logoutButton.addEventListener('click', handleLogout);
+    }
+
+    // Restore auth from Google redirect (server verified the token and embedded user data)
+    if (typeof _googleRedirectUser !== 'undefined' && _googleRedirectUser && _googleRedirectUser.id) {
+        currentUser = {
+            id: _googleRedirectUser.id,
+            name: _googleRedirectUser.name,
+            email: _googleRedirectUser.email,
+            picture: _googleRedirectUser.picture
+        };
+        updateHeaderUI();
     }
 
     // Wait for Google Identity Services to load
