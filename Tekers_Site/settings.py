@@ -27,6 +27,11 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*'] 
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://tekers.tech',
+    'https://www.tekers.tech',
+]
+
 
 # Application definition
 
