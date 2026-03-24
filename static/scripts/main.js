@@ -60,6 +60,9 @@ if (navLinks && navLinks.length > 0) {
             }
 
             // For same-page links, prevent default and smooth scroll
+            // Skip links that are not hash links (e.g. /reviews/)
+            if (!href || !href.startsWith('#')) return;
+
             e.preventDefault();
             const targetId = href;
             const targetSection = document.querySelector(targetId);
