@@ -90,6 +90,7 @@ def reviews_page(request):
     return render(request, 'reviews.html', context)
 
 
+@csrf_exempt
 @require_POST
 def submit_review(request):
     """API endpoint: verify Google token and create/update review."""

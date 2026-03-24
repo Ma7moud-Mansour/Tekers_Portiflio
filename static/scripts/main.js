@@ -254,63 +254,38 @@ function updateHeaderUI() {
 // Initialize Google Sign-In
 function initializeGoogleSignIn() {
     const googleBtnContainer = document.getElementById('google-signin-button');
-
     if (!googleBtnContainer) return;
 
     if (typeof google !== 'undefined' && google.accounts) {
-        if (!GOOGLE_CLIENT_ID) {
-            console.warn('Google Client ID not configured.');
-            return;
-        }
+        if (!GOOGLE_CLIENT_ID) return;
 
-        // Use current page as the redirect target
-        const loginUri = window.location.origin + window.location.pathname;
+        const isReviewsPage = window.location.pathname.includes('/reviews/');
 
         google.accounts.id.initialize({
             client_id: GOOGLE_CLIENT_ID,
+            callback: handleCredentialResponse,
             ux_mode: 'redirect',
-            login_uri: loginUri,
-            auto_select: false
+            login_uri: isReviewsPage
+                ? 'https://tekers.tech/reviews/'
+                : 'https://tekers.tech/',
+            auto_select: false,
+            cancel_on_tap_outside: true
         });
 
-        // Render the Google button in the header
         google.accounts.id.renderButton(
             googleBtnContainer,
             {
                 type: 'standard',
-                theme: 'outline',
+                theme: 'filled_blue',
                 size: 'large',
                 text: 'signin_with',
                 shape: 'pill',
-                width: 220,
+                width: 250,
                 locale: 'en'
             }
         );
 
-        // Make the Google button visible
-        googleBtnContainer.style.opacity = '1';
-        googleBtnContainer.classList.remove('google-btn-hidden');
-
-        // Hide the custom button since real Google button is now visible
-        const customBtn = document.querySelector('.btn-custom-signin');
-        if (customBtn) customBtn.style.display = 'none';
-
-        // Also render Google button on the reviews login prompt if present
-        const reviewsLoginBtn = document.getElementById('reviews-google-signin');
-        if (reviewsLoginBtn) {
-            google.accounts.id.renderButton(
-                reviewsLoginBtn,
-                {
-                    type: 'standard',
-                    theme: 'filled_blue',
-                    size: 'large',
-                    text: 'signin_with',
-                    shape: 'pill',
-                    width: 280,
-                    locale: 'en'
-                }
-            );
-        }
+        googleBtnContainer.style.opacity = '0.01';
     }
 }
 

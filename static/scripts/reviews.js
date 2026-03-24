@@ -9,6 +9,16 @@
     let selectedRating = 0;
     let currentGoogleCredential = null;
 
+    // Restore auth state after Google redirect
+    if (typeof _googleRedirectCredential !== 'undefined' && _googleRedirectCredential) {
+        currentGoogleCredential = _googleRedirectCredential;
+    }
+    if (typeof _googleRedirectUser !== 'undefined' && _googleRedirectUser) {
+        window.currentUser = _googleRedirectUser;
+        if (typeof updateHeaderUI === 'function') updateHeaderUI();
+        setTimeout(updateReviewFormVisibility, 200);
+    }
+
     // ── Star Rating Interaction ──────────────────────
     const starBtns = document.querySelectorAll('.star-btn');
     const ratingInput = document.getElementById('rating-value');
