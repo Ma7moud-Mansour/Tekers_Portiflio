@@ -7,11 +7,11 @@
 
     const CSRF_TOKEN = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value || '';
     let selectedRating = 0;
-    let currentGoogleCredential = null;
+    window.currentGoogleCredential = null;
 
     // Restore auth state after Google redirect
     if (typeof _googleRedirectCredential !== 'undefined' && _googleRedirectCredential) {
-        currentGoogleCredential = _googleRedirectCredential;
+        window.currentGoogleCredential = _googleRedirectCredential;
     }
     if (typeof _googleRedirectUser !== 'undefined' && _googleRedirectUser) {
         window.currentUser = _googleRedirectUser;
@@ -159,7 +159,7 @@
             }
 
             // Get fresh Google credential
-            if (!currentGoogleCredential) {
+            if (!window.currentGoogleCredential) {
                 showNotification('Session expired. Please sign in again.', 'error');
                 handleLogout();
                 return;
@@ -178,7 +178,7 @@
                         'X-CSRFToken': CSRF_TOKEN,
                     },
                     body: JSON.stringify({
-                        credential: currentGoogleCredential,
+                        credential: window.currentGoogleCredential,
                         rating: selectedRating,
                         comment: comment,
                     }),
@@ -226,7 +226,7 @@
 
     window.handleCredentialResponse = function (response) {
         // Store the raw credential for API calls
-        currentGoogleCredential = response.credential;
+        window.currentGoogleCredential = response.credential;
 
         // Call the original handler
         if (originalHandleCredentialResponse) {
@@ -241,7 +241,7 @@
     const originalHandleLogout = window.handleLogout;
 
     window.handleLogout = function () {
-        currentGoogleCredential = null;
+        window.currentGoogleCredential = null;
 
         if (originalHandleLogout) {
             originalHandleLogout();
@@ -253,7 +253,7 @@
     // ── Initialize on page load ──────────────────────
     // Pick up credential from Google redirect (server verified it)
     if (typeof _googleRedirectCredential !== 'undefined' && _googleRedirectCredential) {
-        currentGoogleCredential = _googleRedirectCredential;
+        window.currentGoogleCredential = _googleRedirectCredential;
     }
 
     // Poll for currentUser to be set (from main.js Google auth)
